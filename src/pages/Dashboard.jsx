@@ -142,9 +142,10 @@ const Dashboard = () => {
 const styles = {
   container: {
     minHeight: "100vh",
-    backgroundColor: "#F3F4F6", // Light neutral background
+    backgroundColor: "#F3F4F6",
     fontFamily: "'Inter', sans-serif",
   },
+
   navbar: {
     backgroundColor: "#ffffff",
     borderBottom: "1px solid #E5E7EB",
@@ -153,6 +154,7 @@ const styles = {
     display: "flex",
     alignItems: "center",
   },
+
   navContent: {
     width: "100%",
     maxWidth: "1000px",
@@ -161,15 +163,17 @@ const styles = {
     justifyContent: "space-between",
     alignItems: "center",
   },
+
   logo: {
     fontSize: "18px",
     fontWeight: "700",
-    color: "#4F46E5", // Using the primary Indigo as the brand color
+    color: "#4F46E5",
     margin: 0,
   },
+
   logoutBtn: {
     backgroundColor: "transparent",
-    color: "#EF4444", // Subtle red for logout
+    color: "#EF4444",
     border: "1px solid #FEE2E2",
     padding: "8px 16px",
     borderRadius: "6px",
@@ -178,11 +182,13 @@ const styles = {
     cursor: "pointer",
     transition: "all 0.2s",
   },
+
   mainContent: {
     padding: "40px 20px",
     display: "flex",
     justifyContent: "center",
   },
+
   welcomeCard: {
     backgroundColor: "#ffffff",
     padding: "40px",
@@ -192,6 +198,7 @@ const styles = {
     maxWidth: "500px",
     textAlign: "center",
   },
+
   avatar: {
     width: "60px",
     height: "60px",
@@ -205,112 +212,139 @@ const styles = {
     fontWeight: "600",
     margin: "0 auto 20px auto",
   },
+
   title: {
     fontSize: "24px",
     fontWeight: "600",
     color: "#111827",
     margin: "0 0 10px 0",
   },
+
   subtitle: {
     fontSize: "16px",
     color: "#6B7280",
     margin: 0,
   },
+
   divider: {
     height: "1px",
     backgroundColor: "#F3F4F6",
     margin: "30px 0",
   },
+
   actionSection: {
     textAlign: "left",
   },
+
   footerText: {
     fontSize: "14px",
     fontWeight: "600",
     color: "#374151",
     marginBottom: "8px",
   },
+
   link: {
     color: "#4F46E5",
     textDecoration: "none",
     fontSize: "14px",
     fontWeight: "500",
   },
-  navbar: { backgroundColor: '#fff', padding: '1rem 2rem', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' },
-  navContent: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
-  logoutBtn: { backgroundColor: '#ff4d4f', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer' },
-  mainContent: { display: 'flex', justifyContent: 'center', marginTop: '3rem' },
-  welcomeCard: { backgroundColor: '#fff', padding: '2rem', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', textAlign: 'center', width: '350px' },
-  avatar: { width: '60px', height: '60px', backgroundColor: '#007bff', color: '#fff', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem', fontSize: '1.5rem' },
 
-  /* Modal Specific Styles */
+  textLinkBtn: {
+    background: "none",
+    border: "none",
+    color: "#4F46E5",
+    padding: 0,
+    cursor: "pointer",
+    fontSize: "14px",
+    fontWeight: "500",
+  },
+
+  /* Modal Styles */
   modalOverlay: {
-    position: 'fixed',
+    position: "fixed",
     top: 0,
     left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
     zIndex: 1000,
   },
-  modalContent: {
-    backgroundColor: '#fff',
-    padding: '2rem',
-    borderRadius: '12px',
-    width: '90%',
-    maxWidth: '400px',
-    textAlign: 'center',
-    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
-  },
-  modalTitle: { margin: '0 0 1rem 0', color: '#1a1a1a' },
-  modalText: { color: '#666', marginBottom: '2rem' },
-  modalActions: { display: 'flex', gap: '12px', justifyContent: 'center' },
-  cancelBtn: {
-    padding: '10px 20px',
-    borderRadius: '6px',
-    border: '1px solid #d9d9d9',
-    backgroundColor: '#fff',
-    cursor: 'pointer',
-    fontWeight: '500'
-  },
-  confirmBtn: {
-    padding: '10px 20px',
-    borderRadius: '6px',
-    border: 'none',
-    backgroundColor: '#ff4d4f',
-    color: '#fff',
-    cursor: 'pointer',
-    fontWeight: '500'
-  },
-  container: { minHeight: "100vh", backgroundColor: "#F3F4F6", fontFamily: "'Inter', sans-serif" },
-  navbar: { backgroundColor: "#ffffff", borderBottom: "1px solid #E5E7EB", padding: "0 20px", height: "64px", display: "flex", alignItems: "center" },
-  navContent: { width: "100%", maxWidth: "1000px", margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center" },
-  logo: { fontSize: "18px", fontWeight: "700", color: "#4F46E5", margin: 0 },
-  logoutBtn: { backgroundColor: "transparent", color: "#EF4444", border: "1px solid #FEE2E2", padding: "8px 16px", borderRadius: "6px", cursor: "pointer", fontWeight: "500" },
-  mainContent: { padding: "40px 20px", display: "flex", justifyContent: "center" },
-  welcomeCard: { backgroundColor: "#ffffff", padding: "40px", borderRadius: "16px", boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.05)", width: "100%", maxWidth: "500px", textAlign: "center" },
-  avatar: { width: "60px", height: "60px", backgroundColor: "#EEF2FF", color: "#4F46E5", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "24px", fontWeight: "600", margin: "0 auto 20px auto" },
-  title: { fontSize: "24px", fontWeight: "600", color: "#111827", margin: "0 0 10px 0" },
-  subtitle: { fontSize: "16px", color: "#6B7280", margin: 0 },
-  divider: { height: "1px", backgroundColor: "#F3F4F6", margin: "30px 0" },
-  actionSection: { textAlign: "left" },
-  footerText: { fontSize: "14px", fontWeight: "600", color: "#374151", marginBottom: "8px" },
-  textLinkBtn: { background: "none", border: "none", color: "#4F46E5", padding: 0, cursor: "pointer", fontSize: "14px", fontWeight: "500" },
 
-  // Modal Styles
-  modalOverlay: { position: "fixed", top: 0, left: 0, width: "100%", height: "100%", backgroundColor: "rgba(0, 0, 0, 0.5)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1000 },
-  modalContent: { backgroundColor: "#ffffff", padding: "30px", borderRadius: "12px", width: "90%", maxWidth: "400px", boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)" },
-  modalTitle: { margin: "0 0 10px 0", fontSize: "20px", fontWeight: "600", color: "#111827" },
-  modalText: { margin: "0 0 20px 0", fontSize: "14px", color: "#6B7280" },
-  modalForm: { display: "flex", flexDirection: "column", gap: "15px" },
-  modalInput: { padding: "12px", borderRadius: "8px", border: "1px solid #D1D5DB", fontSize: "14px", outline: "none" },
-  modalActions: { display: "flex", justifyContent: "flex-end", gap: "12px", marginTop: "10px" },
-  cancelBtn: { padding: "10px 16px", borderRadius: "8px", border: "1px solid #D1D5DB", backgroundColor: "white", cursor: "pointer", fontSize: "14px" },
-  confirmBtn: { padding: "10px 16px", borderRadius: "8px", border: "none", backgroundColor: "#EF4444", color: "white", cursor: "pointer", fontSize: "14px" },
-  confirmBtnPrimary: { padding: "10px 16px", borderRadius: "8px", border: "none", backgroundColor: "#4F46E5", color: "white", cursor: "pointer", fontSize: "14px" },
+  modalContent: {
+    backgroundColor: "#ffffff",
+    padding: "30px",
+    borderRadius: "12px",
+    width: "90%",
+    maxWidth: "400px",
+    boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
+  },
+
+  modalTitle: {
+    margin: "0 0 10px 0",
+    fontSize: "20px",
+    fontWeight: "600",
+    color: "#111827",
+  },
+
+  modalText: {
+    margin: "0 0 20px 0",
+    fontSize: "14px",
+    color: "#6B7280",
+  },
+
+  modalForm: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "15px",
+  },
+
+  modalInput: {
+    padding: "12px",
+    borderRadius: "8px",
+    border: "1px solid #D1D5DB",
+    fontSize: "14px",
+    outline: "none",
+  },
+
+  modalActions: {
+    display: "flex",
+    justifyContent: "flex-end",
+    gap: "12px",
+    marginTop: "10px",
+  },
+
+  cancelBtn: {
+    padding: "10px 16px",
+    borderRadius: "8px",
+    border: "1px solid #D1D5DB",
+    backgroundColor: "white",
+    cursor: "pointer",
+    fontSize: "14px",
+  },
+
+  confirmBtn: {
+    padding: "10px 16px",
+    borderRadius: "8px",
+    border: "none",
+    backgroundColor: "#EF4444",
+    color: "white",
+    cursor: "pointer",
+    fontSize: "14px",
+  },
+
+  confirmBtnPrimary: {
+    padding: "10px 16px",
+    borderRadius: "8px",
+    border: "none",
+    backgroundColor: "#4F46E5",
+    color: "white",
+    cursor: "pointer",
+    fontSize: "14px",
+  },
 };
 
 export default Dashboard;

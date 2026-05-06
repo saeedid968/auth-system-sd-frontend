@@ -81,7 +81,6 @@ const Login = () => {
               backgroundColor: loading ? "#818CF8" : "#4F46E5",
               cursor: loading ? "not-allowed" : "pointer"
             }}
-            disabled={loading}
           >
             {loading ? "Loging in..." : "Login In"}
           </button>

@@ -35,7 +35,7 @@ const Signup = () => {
             navigate("/dashboard");
         } catch (err) {
             toast.error("Signup failed. Try a different email.", { id: "auth-toast" });
-        }finally{
+        } finally {
             setLoading(false);
         }
     };
@@ -96,7 +96,6 @@ const Signup = () => {
                             backgroundColor: loading ? "#818CF8" : "#4F46E5",
                             cursor: loading ? "not-allowed" : "pointer"
                         }}
-                        disabled={loading}
                     >
                         {loading ? "Creating account..." : "Create account"}
                     </button>
