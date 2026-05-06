@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-    baseURL: "https://auth-system-sd.vercel.app/",
+    baseURL: import.meta.env.VITE_API_URL || "http://localhost:4000/api",
     withCredentials: true
 });
 
