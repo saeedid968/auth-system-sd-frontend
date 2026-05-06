@@ -236,7 +236,6 @@ const styles = {
     fontSize: "14px",
     fontWeight: "500",
   },
-  container: { fontFamily: 'sans-serif', backgroundColor: '#f4f7f6', minHeight: '100vh' },
   navbar: { backgroundColor: '#fff', padding: '1rem 2rem', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' },
   navContent: { display: 'flex', justifyContent: 'space-between', alignItems: 'center' },
   logoutBtn: { backgroundColor: '#ff4d4f', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer' },
