@@ -1,26 +1,53 @@
 import { useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 import API from "../services/api";
 import toast from "react-hot-toast";
+import PasswordInput from "../components/PasswordInput";
 
 const Dashboard = () => {
-  const { user, logout } = useAuth();
-
-  // States for Modals
+  const { user, logout, isCheckingAuth } = useAuth();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
-
-  // State for Password Change
   const [loading, setLoading] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
   const [passwords, setPasswords] = useState({
     oldPassword: "",
     newPassword: ""
   });
 
-  const handleLogout = () => {
+  const initials = user?.name
+    ? user.name
+        .split(" ")
+        .map((part) => part[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase()
+    : "U";
+
+  const handleLogout = async () => {
     toast.dismiss();
-    logout();
-    toast.success("Logged out successfully", { id: "logout-toast" });
+    setLoggingOut(true);
+
+    try {
+      await logout();
+      toast.success("Logged out successfully", { id: "logout-toast" });
+    } catch {
+      toast.error("Logout failed. Please try again.", { id: "logout-toast" });
+    } finally {
+      setLoggingOut(false);
+    }
+  };
+
+  const handlePasswordChange = (e) => {
+    setPasswords((current) => ({
+      ...current,
+      [e.target.name]: e.target.value
+    }));
+  };
+
+  const closePasswordModal = () => {
+    setShowPasswordModal(false);
+    setPasswords({ oldPassword: "", newPassword: "" });
   };
 
   const handleUpdatePassword = async (e) => {
@@ -31,320 +58,126 @@ const Dashboard = () => {
     try {
       await API.put("/auth/update-password", passwords);
       toast.success("Password updated successfully!", { id: "upd-pw" });
-      setPasswords({ oldPassword: "", newPassword: "" });
-      setShowPasswordModal(false); // Close modal on success
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to update password", { id: "upd-pw" });
+      closePasswordModal();
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to update password", { id: "upd-pw" });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={styles.container}>
-      {/* Navbar */}
-      <nav style={styles.navbar}>
-        <div style={styles.navContent}>
-          <h1 style={styles.logo}>MERN Auth</h1>
-          <button onClick={() => setShowLogoutModal(true)} style={styles.logoutBtn}>
+    <main className="dashboard-page">
+      <nav className="topbar">
+        <div className="topbar-inner">
+          <div className="brand-mini">
+            <span>MA</span>
+            <strong>MERN Auth</strong>
+          </div>
+
+          <button className="danger-ghost-btn" onClick={() => setShowLogoutModal(true)}>
             Logout
           </button>
         </div>
       </nav>
 
-      {/* Main Content */}
-      <main style={styles.mainContent}>
-        <div style={styles.welcomeCard}>
-          <div style={styles.avatar}>
-            {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
+      <section className="dashboard-shell">
+        <div className="welcome-panel">
+          <div className="profile-row">
+            <div className="avatar">{initials}</div>
+            <div>
+              <p className="eyebrow">{isCheckingAuth ? "Syncing session" : "Signed in"}</p>
+              <h1>Welcome, {user?.name || "User"}</h1>
+              <p>{user?.email}</p>
+            </div>
           </div>
-          <h2 style={styles.title}>Welcome, {user?.name || "User"}!</h2>
-          <p style={styles.subtitle}>Manage your account and security settings.</p>
 
-          <div style={styles.divider}></div>
-
-          <div style={styles.actionSection}>
-            <p style={styles.footerText}>Privacy & Security</p>
-            <button
-              onClick={() => setShowPasswordModal(true)}
-              style={styles.textLinkBtn}
-            >
-              Change Password →
-            </button>
-          </div>
-        </div>
-      </main>
-
-      {/* 1. Logout Confirmation Modal */}
-      {showLogoutModal && (
-        <div style={styles.modalOverlay} onClick={() => setShowLogoutModal(false)}>
-          <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-            <h3 style={styles.modalTitle}>Confirm Logout</h3>
-            <p style={styles.modalText}>Are you sure you want to log out?</p>
-            <div style={styles.modalActions}>
-              <button onClick={() => setShowLogoutModal(false)} style={styles.cancelBtn}>Cancel</button>
-              <button onClick={handleLogout} style={styles.confirmBtn}>Logout</button>
+          <div className="stats-grid">
+            <div className="stat-card">
+              <span>Role</span>
+              <strong>{user?.role || "user"}</strong>
+            </div>
+            <div className="stat-card">
+              <span>Session</span>
+              <strong>{isCheckingAuth ? "Checking" : "Active"}</strong>
             </div>
           </div>
         </div>
+
+        <div className="settings-panel">
+          <div>
+            <p className="eyebrow">Security</p>
+            <h2>Account settings</h2>
+            <p>Keep your password fresh and manage your session from one place.</p>
+          </div>
+
+          <button className="secondary-btn" onClick={() => setShowPasswordModal(true)}>
+            Change password
+          </button>
+        </div>
+      </section>
+
+      {showLogoutModal && (
+        <div className="modal-overlay" onClick={() => setShowLogoutModal(false)}>
+          <section className="modal-card" onClick={(e) => e.stopPropagation()}>
+            <h2>Confirm logout</h2>
+            <p>Are you sure you want to end this session?</p>
+            <div className="modal-actions">
+              <button className="secondary-btn" onClick={() => setShowLogoutModal(false)}>
+                Cancel
+              </button>
+              <button className="danger-btn" onClick={handleLogout} disabled={loggingOut}>
+                {loggingOut ? "Logging out..." : "Logout"}
+              </button>
+            </div>
+          </section>
+        </div>
       )}
 
-      {/* 2. Change Password Modal */}
       {showPasswordModal && (
-        <div style={styles.modalOverlay} onClick={() => setShowPasswordModal(false)}>
-          <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-            <h3 style={styles.modalTitle}>Update Password</h3>
-            <p style={styles.modalText}>Enter your current and new password.</p>
+        <div className="modal-overlay" onClick={closePasswordModal}>
+          <section className="modal-card" onClick={(e) => e.stopPropagation()}>
+            <h2>Update password</h2>
+            <p>Enter your current password and choose a new one.</p>
 
-            <form onSubmit={handleUpdatePassword} style={styles.modalForm}>
-              <input
-                type="password"
-                placeholder="Current Password"
-                style={styles.modalInput}
+            <form className="modal-form" onSubmit={handleUpdatePassword}>
+              <PasswordInput
+                id="oldPassword"
+                name="oldPassword"
+                label="Current password"
+                placeholder="Current password"
                 value={passwords.oldPassword}
-                onChange={(e) => setPasswords({ ...passwords, oldPassword: e.target.value })}
+                onChange={handlePasswordChange}
+                autoComplete="current-password"
                 required
               />
-              <input
-                type="password"
-                placeholder="New Password"
-                style={styles.modalInput}
+
+              <PasswordInput
+                id="newPassword"
+                name="newPassword"
+                label="New password"
+                placeholder="New password"
                 value={passwords.newPassword}
-                onChange={(e) => setPasswords({ ...passwords, newPassword: e.target.value })}
-                required
+                onChange={handlePasswordChange}
+                autoComplete="new-password"
                 minLength={6}
+                required
               />
-              <div style={styles.modalActions}>
-                <button
-                  type="button"
-                  onClick={() => setShowPasswordModal(false)}
-                  style={styles.cancelBtn}
-                >
+
+              <div className="modal-actions">
+                <button type="button" className="secondary-btn" onClick={closePasswordModal}>
                   Cancel
                 </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  style={styles.confirmBtnPrimary}
-                >
-                  {loading ? "Updating..." : "Save Changes"}
+                <button type="submit" className="primary-btn compact-btn" disabled={loading}>
+                  {loading ? "Saving..." : "Save changes"}
                 </button>
               </div>
             </form>
-          </div>
+          </section>
         </div>
       )}
-    </div>
+    </main>
   );
-};
-
-// Consistent Theme Styles
-const styles = {
-  container: {
-    minHeight: "100vh",
-    backgroundColor: "#F3F4F6",
-    fontFamily: "'Inter', sans-serif",
-  },
-
-  navbar: {
-    backgroundColor: "#ffffff",
-    borderBottom: "1px solid #E5E7EB",
-    padding: "0 20px",
-    height: "64px",
-    display: "flex",
-    alignItems: "center",
-  },
-
-  navContent: {
-    width: "100%",
-    maxWidth: "1000px",
-    margin: "0 auto",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-
-  logo: {
-    fontSize: "18px",
-    fontWeight: "700",
-    color: "#4F46E5",
-    margin: 0,
-  },
-
-  logoutBtn: {
-    backgroundColor: "transparent",
-    color: "#EF4444",
-    border: "1px solid #FEE2E2",
-    padding: "8px 16px",
-    borderRadius: "6px",
-    fontSize: "14px",
-    fontWeight: "500",
-    cursor: "pointer",
-    transition: "all 0.2s",
-  },
-
-  mainContent: {
-    padding: "40px 20px",
-    display: "flex",
-    justifyContent: "center",
-  },
-
-  welcomeCard: {
-    backgroundColor: "#ffffff",
-    padding: "40px",
-    borderRadius: "16px",
-    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.05)",
-    width: "100%",
-    maxWidth: "500px",
-    textAlign: "center",
-  },
-
-  avatar: {
-    width: "60px",
-    height: "60px",
-    backgroundColor: "#EEF2FF",
-    color: "#4F46E5",
-    borderRadius: "50%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "24px",
-    fontWeight: "600",
-    margin: "0 auto 20px auto",
-  },
-
-  title: {
-    fontSize: "24px",
-    fontWeight: "600",
-    color: "#111827",
-    margin: "0 0 10px 0",
-  },
-
-  subtitle: {
-    fontSize: "16px",
-    color: "#6B7280",
-    margin: 0,
-  },
-
-  divider: {
-    height: "1px",
-    backgroundColor: "#F3F4F6",
-    margin: "30px 0",
-  },
-
-  actionSection: {
-    textAlign: "left",
-  },
-
-  footerText: {
-    fontSize: "14px",
-    fontWeight: "600",
-    color: "#374151",
-    marginBottom: "8px",
-  },
-
-  link: {
-    color: "#4F46E5",
-    textDecoration: "none",
-    fontSize: "14px",
-    fontWeight: "500",
-  },
-
-  textLinkBtn: {
-    background: "none",
-    border: "none",
-    color: "#4F46E5",
-    padding: 0,
-    cursor: "pointer",
-    fontSize: "14px",
-    fontWeight: "500",
-  },
-
-  /* Modal Styles */
-  modalOverlay: {
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 1000,
-  },
-
-  modalContent: {
-    backgroundColor: "#ffffff",
-    padding: "30px",
-    borderRadius: "12px",
-    width: "90%",
-    maxWidth: "400px",
-    boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
-  },
-
-  modalTitle: {
-    margin: "0 0 10px 0",
-    fontSize: "20px",
-    fontWeight: "600",
-    color: "#111827",
-  },
-
-  modalText: {
-    margin: "0 0 20px 0",
-    fontSize: "14px",
-    color: "#6B7280",
-  },
-
-  modalForm: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "15px",
-  },
-
-  modalInput: {
-    padding: "12px",
-    borderRadius: "8px",
-    border: "1px solid #D1D5DB",
-    fontSize: "14px",
-    outline: "none",
-  },
-
-  modalActions: {
-    display: "flex",
-    justifyContent: "flex-end",
-    gap: "12px",
-    marginTop: "10px",
-  },
-
-  cancelBtn: {
-    padding: "10px 16px",
-    borderRadius: "8px",
-    border: "1px solid #D1D5DB",
-    backgroundColor: "white",
-    cursor: "pointer",
-    fontSize: "14px",
-  },
-
-  confirmBtn: {
-    padding: "10px 16px",
-    borderRadius: "8px",
-    border: "none",
-    backgroundColor: "#EF4444",
-    color: "white",
-    cursor: "pointer",
-    fontSize: "14px",
-  },
-
-  confirmBtnPrimary: {
-    padding: "10px 16px",
-    borderRadius: "8px",
-    border: "none",
-    backgroundColor: "#4F46E5",
-    color: "white",
-    cursor: "pointer",
-    fontSize: "14px",
-  },
 };
 
 export default Dashboard;

@@ -1,37 +1,39 @@
 import { useState } from "react";
-import { useAuth } from "../context/AuthContext";
-import { useNavigate, Link } from "react-router-dom";
-import toast from 'react-hot-toast';
+import { useAuth } from "../hooks/useAuth";
+import { useNavigate, Link, Navigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import PasswordInput from "../components/PasswordInput";
 
 const Login = () => {
-  const { login } = useAuth();
+  const { login, user, isCheckingAuth } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-
   const [formData, setFormData] = useState({
     email: "",
     password: ""
   });
 
-  const [error, setError] = useState("");
+  if (!isCheckingAuth && user) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
+    setFormData((current) => ({
+      ...current,
       [e.target.name]: e.target.value
-    });
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     toast.dismiss();
     setLoading(true);
-    setError("");
+
     try {
-      await login(formData.email, formData.password);
+      await login(formData.email.trim(), formData.password);
       toast.success("Successfully logged in!", { id: "auth-toast" });
       navigate("/dashboard");
-    } catch (err) {
+    } catch {
       toast.error("Invalid email or password", { id: "auth-toast" });
     } finally {
       setLoading(false);
@@ -39,154 +41,63 @@ const Login = () => {
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <h2 style={styles.title}>Welcome Back</h2>
-        <p style={styles.subtitle}>Please enter your details to sign in.</p>
+    <main className="auth-page">
+      <section className="auth-shell">
+        <div className="brand-panel">
+          <div className="brand-badge">sd</div>
+          <div>
+            <p className="eyebrow">Secure account access</p>
+            <h1>MERN Auth</h1>
+            <p className="brand-copy">A cleaner, faster sign-in flow for your deployed auth system.</p>
+          </div>
+        </div>
 
-        {error && <div style={styles.errorBox}>{error}</div>}
+        <form className="auth-card" onSubmit={handleSubmit}>
+          <div className="auth-heading">
+            <h2>Welcome back</h2>
+            <p>Sign in to continue to your dashboard.</p>
+          </div>
 
-        <form onSubmit={handleSubmit} style={styles.form}>
-          <div style={styles.inputGroup}>
-            <label style={styles.label}>Email Address</label>
+          <div className="field">
+            <label htmlFor="email">Email address</label>
             <input
+              id="email"
+              className="input"
               type="email"
               name="email"
-              placeholder="test@company.com"
+              placeholder="name@company.com"
               value={formData.email}
               onChange={handleChange}
-              style={styles.input}
+              autoComplete="email"
               required
             />
           </div>
 
-          <div style={styles.inputGroup}>
-            <label style={styles.label}>Password</label>
-            <input
-              type="password"
-              name="password"
-              placeholder="••••••••"
-              value={formData.password}
-              onChange={handleChange}
-              style={styles.input}
-              required
-            />
-          </div>
+          <PasswordInput
+            id="password"
+            name="password"
+            label="Password"
+            placeholder="Enter your password"
+            value={formData.password}
+            onChange={handleChange}
+            autoComplete="current-password"
+            required
+          />
 
-          <button
-            type="submit"
-            disabled={loading}
-            style={{
-              ...styles.button,
-              backgroundColor: loading ? "#818CF8" : "#4F46E5",
-              cursor: loading ? "not-allowed" : "pointer"
-            }}
-          >
-            {loading ? "Loging in..." : "Login In"}
+          <button className="primary-btn" type="submit" disabled={loading}>
+            {loading ? "Signing in..." : "Sign in"}
           </button>
+
+          <div className="auth-links">
+            <Link to="/forgot-password">Forgot password?</Link>
+            <span>
+              New here? <Link to="/signup">Create account</Link>
+            </span>
+          </div>
         </form>
-
-        <div style={styles.footer}>
-          <p style={styles.footerText}>
-            Don't have an account? <Link to="/signup" style={styles.link}>Sign up</Link>
-          </p>
-          <p style={styles.footerText}>
-            <Link to="/forgot-password" style={styles.link}>Forgot Password?</Link>
-          </p>
-        </div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
-};
-
-// UI Styles
-const styles = {
-  container: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    minHeight: "100vh",
-    backgroundColor: "#F3F4F6", // Light neutral background
-    fontFamily: "'Inter', sans-serif",
-  },
-  card: {
-    backgroundColor: "#ffffff",
-    padding: "40px",
-    borderRadius: "12px",
-    boxShadow: "0 10px 25px rgba(0, 0, 0, 0.05)",
-    width: "100%",
-    maxWidth: "400px",
-  },
-  title: {
-    margin: "0 0 10px 0",
-    fontSize: "24px",
-    fontWeight: "600",
-    color: "#111827",
-    textAlign: "center",
-  },
-  subtitle: {
-    margin: "0 0 30px 0",
-    fontSize: "14px",
-    color: "#6B7280",
-    textAlign: "center",
-  },
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "20px",
-  },
-  inputGroup: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "8px",
-  },
-  label: {
-    fontSize: "14px",
-    fontWeight: "500",
-    color: "#374151",
-  },
-  input: {
-    padding: "12px 16px",
-    borderRadius: "8px",
-    border: "1px solid #D1D5DB",
-    fontSize: "15px",
-    outline: "none",
-    transition: "all 0.2s ease", // Smooth focus transition
-  },
-  button: {
-    backgroundColor: "#4F46E5",
-    color: "white",
-    padding: "12px",
-    borderRadius: "8px",
-    border: "none",
-    fontSize: "16px",
-    fontWeight: "500",
-    transition: "transform 0.1s ease, background-color 0.2s", // Click effect
-  },
-  errorBox: {
-    backgroundColor: "#FEE2E2",
-    color: "#B91C1C",
-    padding: "10px",
-    borderRadius: "6px",
-    fontSize: "14px",
-    marginBottom: "20px",
-    textAlign: "center",
-    border: "1px solid #FECACA",
-  },
-  footer: {
-    marginTop: "25px",
-    textAlign: "center",
-  },
-  footerText: {
-    fontSize: "14px",
-    color: "#6B7280",
-    margin: "5px 0",
-  },
-  link: {
-    color: "#4F46E5",
-    textDecoration: "none",
-    fontWeight: "500",
-  }
 };
 
 export default Login;
