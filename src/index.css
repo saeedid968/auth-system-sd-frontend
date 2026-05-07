@@ -317,6 +317,68 @@ a:hover {
   margin: 2px 0 0;
 }
 
+.mail-progress {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 15px;
+  border: 1px solid #bfdbfe;
+  border-radius: 16px;
+  background: #eff6ff;
+  color: #1e3a8a;
+}
+
+.mail-progress strong {
+  display: block;
+  font-size: 14px;
+}
+
+.mail-progress p {
+  margin: 4px 0 0;
+  color: #42639a;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.mail-progress-icon {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: #dbeafe;
+}
+
+.mail-progress-icon span {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(37, 99, 235, 0.22);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 800ms linear infinite;
+}
+
+.form-notice {
+  padding: 12px 14px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.form-notice.success {
+  color: #065f46;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+}
+
+.form-notice.error {
+  color: #991b1b;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+}
+
 .dashboard-page {
   min-height: 100vh;
   background:
@@ -501,6 +563,7 @@ a:hover {
     transform: rotate(360deg);
   }
 }
+
 
 @media (max-width: 820px) {
   .auth-shell,

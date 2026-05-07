@@ -6,18 +6,27 @@ import API from "../services/api";
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const [notice, setNotice] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     toast.dismiss();
+    setNotice(null);
     setLoading(true);
 
     try {
-      await API.post("/auth/forgot-password", { email: email.trim() });
-      toast.success("Reset link sent to your email!", { id: "forgot-pw" });
+      const { data } = await API.post("/auth/forgot-password", { email: email.trim() });
+      const message = data.message || "Reset link sent to your email.";
+      setNotice({ type: "success", message });
+      toast.success(message, { id: "forgot-pw" });
       setEmail("");
-    } catch {
-      toast.error("User not found or server error", { id: "forgot-pw" });
+    } catch (error) {
+      const message = error.code === "ECONNABORTED"
+        ? "Email service is taking too long. Please try again."
+        : error.response?.data?.message || "User not found or server error";
+
+      setNotice({ type: "error", message });
+      toast.error(message, { id: "forgot-pw" });
     } finally {
       setLoading(false);
     }
@@ -32,6 +41,24 @@ const ForgotPassword = () => {
           <p>Enter your email and we will send a reset link.</p>
         </div>
 
+        {loading && (
+          <div className="mail-progress" aria-live="polite">
+            <div className="mail-progress-icon">
+              <span />
+            </div>
+            <div>
+              <strong>Sending reset link</strong>
+              <p>Connecting to the mail service and preparing your secure link.</p>
+            </div>
+          </div>
+        )}
+
+        {notice && !loading && (
+          <div className={`form-notice ${notice.type}`} role="status">
+            {notice.message}
+          </div>
+        )}
+
         <div className="field">
           <label htmlFor="email">Email address</label>
           <input
@@ -42,6 +69,7 @@ const ForgotPassword = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             autoComplete="email"
+            disabled={loading}
             required
           />
         </div>
